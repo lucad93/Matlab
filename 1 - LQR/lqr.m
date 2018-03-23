@@ -9,7 +9,7 @@ R = [17 0 -4 0 0; 0 1 0 0 0; -4 0 2 0 0; 0 0 0 2 -2; 0 0 0 -2 5];
 A = eye(3);
 
 %Matrice degli ingressi
-U = [4 0 -1 0 0; 0 1 0 -1 0; 0 0 1 1 -1];
+B = [4 0 -1 0 0; 0 1 0 -1 0; 0 0 1 1 -1];
 %Procedura LQR
 
-%Hamiltoniana
+%Equazione di Riccati per determinare P
