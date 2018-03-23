@@ -39,14 +39,16 @@ subplot(3,1,1); plot(Tsim,X(:,1));  title('x1');
 subplot(3,1,2); plot(Tsim,X(:,2));  title('x2');
 subplot(3,1,3); plot(Tsim,X(:,3));  title('x3');
 
-%provo ora con K(:,:,1)
+%provo ora con K
 sys = ss(A+B*K(:,:,1),B,C,D,sampleTime);
 U = zeros(5, length(T));
-[Y,Tsim,X] = lsim(sys,U,T,x0);
-figure(f_k);
-subplot(3,1,1); plot(Tsim,X(:,1));  title('x1 (utilizzando K)');
-subplot(3,1,2); plot(Tsim,X(:,2));  title('x2 (utilizzando K)');
-subplot(3,1,3); plot(Tsim,X(:,3));  title('x3 (utilizzando K)');
+x = 0:1:7;
+figure(2);
+for n = 1:7
+    K_t = -inv(R + B' * P(n+1) * B) * B' * P(n+1) * A;
+    U(n) = K_t(n) * X(n);
+end
+plot(U(:,1),U(:,2))
 
 %Guardando i grafici si nota che la condizione x1(t)~2*x2(t)+x3(t) è
 %verificata a regime.
