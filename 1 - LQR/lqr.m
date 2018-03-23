@@ -50,6 +50,11 @@ for n = 1:7
 end
 plot(U(:,1),U(:,2))
 
+%Calcolo la differenza tra i valori ottenuti con riccati_P_K e ourRiccatiSolver:
+[myK, myK_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
+K - myK
+K_infinito - myK_infinito
+
 %Guardando i grafici si nota che la condizione x1(t)~2*x2(t)+x3(t) è
 %verificata a regime.
 %Facendo una stampa dei controlli si nota che anche le condizioni
