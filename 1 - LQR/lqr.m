@@ -43,16 +43,21 @@ subplot(3,1,3); plot(Tsim,X(:,3));  title('x3');
 %sys = ss(A+B*K(:,:,1),B,C,D,sampleTime);
 U = zeros(5, 1);
 
-figure(2);
-x(:,:,1)=x0;
+figure(f_k);
+x(:,:,1) = x0;
 
 %Simulazione manuale su un orizzonte finito
-for t = 1:7
-    u=K(:,:,t)*x(:,:,t);
-    x(:,:,t+1) = A*x(:,:,t)+B*u;
+for t = 1:horizon
+    u = K(:,:,t) * x(:,:,t);
+    x(:,:,t+1) = A * x(:,:,t) + B * u;
 end
-
-
+%la funzione plot non accetta matrici di 3 dimensioni (x è di dimensioni 3x1x8)
+%quindi uso la funzione reshape per trasformarla in una matrice 3x8, così
+%levo quella colonna inutile
+x = reshape(x,[3,length(T)]);
+subplot(3,1,1); plot(T,x(1,:,:));  title('x1');
+subplot(3,1,2); plot(T,x(2,:,:));  title('x2');
+subplot(3,1,3); plot(T,x(3,:,:));  title('x3');
 
 %Calcolo la differenza tra i valori ottenuti con riccati_P_K e ourRiccatiSolver:
 [myK, myK_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
