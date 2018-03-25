@@ -61,8 +61,8 @@ subplot(3,1,3); plot(T,x(3,:,:));  title('x3');
 
 %Calcolo la differenza tra i valori ottenuti con riccati_P_K e ourRiccatiSolver:
 [myK, myK_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
-K - myK
-K_infinito - myK_infinito
+diffK = K - myK;
+diffK_inf = K_infinito - myK_infinito;
 
 %Guardando i grafici si nota che la condizione x1(t)~2*x2(t)+x3(t) è
 %verificata a regime.
