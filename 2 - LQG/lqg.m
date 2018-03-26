@@ -1,10 +1,19 @@
 clear
 clc
 
-%Test della funzione di Kalman
-A = [-0.5 0 0; 0 -0.5 0; 0 2 -0.5];
-B = zeros(3,5);
+% Matrice dello stato
+%A = [-0.5 0 0; 0 -0.5 0; 0 2 -0.5];
+A = eye(3);
+
+% Matrice degli ingressi
+%B = zeros(3,5);
+B = [4 0 -1 0 0; 0 1 0 -1 0; 0 0 1 1 -1];
+
+% Matrice delle uscite
+%C = eye(3);
 C = eye(3);
+D = 0;
+
 u = zeros(5,1);
 
 abs(eig(A))
@@ -19,7 +28,11 @@ covX = ones(3);
 Q = ones(3);    R = eye(3);
 
 %Simulazione per 8 istanti:
-T = 0:7;
+% T = 0:7;
+sampleTime = 1;
+horizon = 7;
+T = 0:sampleTime:horizon;
+
 
 for t=1:length(T)-1
     x(:,t+1) = A*x(:,t) + normrnd(0,1,[3,1]);                   %vero stato
