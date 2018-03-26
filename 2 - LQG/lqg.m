@@ -11,7 +11,7 @@ B = [4 0 -1 0 0; 0 1 0 -1 0; 0 0 1 1 -1];
 
 % Matrice delle uscite
 %C = eye(3);
-C = eye(3);
+C = [1 1 -1];
 D = 0;
 
 u = zeros(5,1);
@@ -40,5 +40,5 @@ for t=1:length(T)-1
     [extX(:,t+1), covX] = ourKalman(A,B,C,x(:,t),u,y,covX,Q,R); %stima stato
 end
 
-subplot(2,1,1); plot(T,x(:,:));     title('Vero stato');
-subplot(2,1,2); plot(T,extX(:,:));  title('Stato stimato');
+Qf = Q;
+[K_finito, K_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
