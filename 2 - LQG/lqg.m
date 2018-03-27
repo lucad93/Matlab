@@ -44,4 +44,20 @@ end
 subplot(2,1,1);     plot(T,x(:,:));     title("Vero stato");
 subplot(2,1,2);     plot(T,extX(:,:));  title("Stato stimato");
 
+% Determinazione di K_finito e di K_infinito tramite nostra funzione di
+% Riccati
 [K_finito, K_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
+
+% Variabile per il grafico
+f_k_infinito = figure;
+
+% Utilizzo di K_infinito
+sistema = ss(A+B*K_infinito,B,C,D,sampleTime);
+U = zeros(5,length(T));
+[Y,Tsim,X] = lsim(sistema,U,T,x0);
+figure(f_k_infinito);
+
+% Grafici dell'andamento dello stato in LQG
+subplot(3,1,1); plot(Tsim,X(:,1));  title('x1');
+subplot(3,1,2); plot(Tsim,X(:,2));  title('x2');
+subplot(3,1,3); plot(Tsim,X(:,3));  title('x3');
