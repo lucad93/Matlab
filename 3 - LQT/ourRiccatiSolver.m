@@ -1,31 +1,20 @@
-function [K, K_infinite] = ourRiccatiSolver(A,B,Q,Qf,R,T)
-    %CALCOLO K
-    N = length(T);      %numero di istanti di tempo
-    P(:,:,N) = Qf;      %inizializzazione P
+function [L, Lg, g] = ourRiccatiSolver(A,B,C,Q,Qf,R,T,z)
+    N = length(T);          %numero di istanti di tempo
+    P(:,:,N) = Qf;          %inizializzazione P
+    g(:,N) = C'*Qf*z;       %inizializzazione g
+    E = B*inv(R)*B';
+    W = C'*Q;
+    I = eye(length(A));
     
-    %calcolo P a ritroso
-    for t=N-1:-1:2
-       P(:,:,t-1) = Q + A'*P(:,:,t)*A - A'*P(:,:,t)*B * inv(R + B'*P(:,:,t)*B)*B'*P(:,:,t)*A; 
-    end
-    
-    %calcolo K in avanti
-    for t=1:N-1
-       K(:,:,t) = -inv(R + B'*P(:,:,t+1)*B)*B'*P(:,:,t+1)*A;
-    end
-    %-----------------------------------------------------------------------------------------
-    %CALCOLO K_infinite: stessa procedura ma N=100 (per esempio)
-    N = 100;
-    P(:,:,N) = Qf;
-    
+    %calcolo P e g a ritroso
     for t=N:-1:2
-       P(:,:,t-1) = Q + A'*P(:,:,t)*A - A'*P(:,:,t)*B * inv(R + B'*P(:,:,t)*B)*B'*P(:,:,t)*A; 
+       P(:,:,t-1) = Q + A'*P(:,:,t)*A - A'*P(:,:,t)*B * inv(R + B'*P(:,:,t)*B)*B'*P(:,:,t)*A;
+       g(:,t-1) = A' * (I - inv(inv(P(:,:,t))*E)) * g(:,t) + W*z;
     end
     
-    %K_inf: variabile per eseguire l'iterazione
+    %calcolo L e Lg in avanti
     for t=1:N-1
-       K_inf(:,:,t) = -inv(R + B'*P(:,:,t+1)*B)*B'*P(:,:,t+1)*A;
+       Lg(:,:,t) = inv(R + B'*P(:,:,t+1)*B) * B';
+       L(:,:,t) = Lg(:,:,t) * P(:,:,t+1) * A;
     end
-    
-    %K_infinite viene preso tra i primi valori di K_inf, per esempio il primo
-    K_infinite = K_inf(:,:,1);
 end
