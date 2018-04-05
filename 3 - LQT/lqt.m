@@ -2,7 +2,7 @@ clear
 clc
 
 %Matrici dei costi per lo stato (Q) e per i controlli (R)
-Q = [4 -2 -2; -2 5 2; -2 2 2];
+Q = [2 -2 -1; -2 5 2; -1 2 2];
 Qf = Q;
 R = [17 0 -4 0 0; 0 1 0 0 0; -4 0 2 0 0; 0 0 0 2 -2; 0 0 0 -2 5];
 
@@ -23,7 +23,7 @@ T = 0:sampleTime:horizon-1;
 
 %Stato iniziale e segnale di riferimento
 x0 = [10 5 -3]';
-z = [10 0 -10]';
+z = [10 -10 0]';
 
 %Ottengo le matrici per il controllo ottimo
 [L, Lg, g] = ourRiccatiSolver(A,B,C,Q,Qf,R,T,z);

@@ -1,6 +1,6 @@
 function [L, Lg, g] = ourRiccatiSolver(A,B,C,Q,Qf,R,T,z)
     N = length(T);          %numero di istanti di tempo
-    P(:,:,N) = Qf;          %inizializzazione P
+    P(:,:,N) = C'*Qf*C;     %inizializzazione P
     g(:,N) = C'*Qf*z;       %inizializzazione g
     E = B*inv(R)*B';
     W = C'*Q;
@@ -8,8 +8,8 @@ function [L, Lg, g] = ourRiccatiSolver(A,B,C,Q,Qf,R,T,z)
     
     %calcolo P e g a ritroso
     for t=N:-1:2
-       P(:,:,t-1) = Q + A'*P(:,:,t)*A - A'*P(:,:,t)*B * inv(R + B'*P(:,:,t)*B)*B'*P(:,:,t)*A;
-       g(:,t-1) = A' * (I - inv(inv(P(:,:,t))*E)) * g(:,t) + W*z;
+       P(:,:,t-1) = A'*P(:,:,t)*inv(I+E*P(:,:,t))*A + C'*Q*C;
+       g(:,t-1) = A' * (I - inv(inv(P(:,:,t))+E)*E) * g(:,t) + W*z;
     end
     
     %calcolo L e Lg in avanti
