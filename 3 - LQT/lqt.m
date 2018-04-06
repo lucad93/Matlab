@@ -19,18 +19,22 @@ D = 0;
 %Parametri della simulazione
 sampleTime = 1;
 horizon = 7;
-T = 0:sampleTime:horizon-1;
+T = 0:sampleTime:horizon;
 
 %Stato iniziale e segnale di riferimento
-x0 = [10 5 -3]';
-z = [10 -10 0]';
+x0 = [10 5 7]';
+for t=1:length(T)
+   z(1,t) = 10;
+   z(2,t) = -10;
+   z(3,t) = 0;
+end
 
 %Ottengo le matrici per il controllo ottimo
 [L, Lg, g] = ourRiccatiSolver(A,B,C,Q,Qf,R,T,z);
 
 %Simulo il sistema
 x(:,1) = x0;
-for t=1:horizon-1
+for t=1:sampleTime:horizon
    u(:,t) = -L(:,:,t)*x(:,t) + Lg(:,:,t)*g(:,t+1);
    x(:,t+1) = A*x(:,t) + B*u(:,t);
 end
