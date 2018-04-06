@@ -4,7 +4,7 @@ function [K, K_infinite] = ourRiccatiSolver(A,B,Q,Qf,R,T)
     P(:,:,N) = Qf;      %inizializzazione P
     
     %calcolo P a ritroso
-    for t=N-1:-1:2
+    for t=N:-1:2
        P(:,:,t-1) = Q + A'*P(:,:,t)*A - A'*P(:,:,t)*B * inv(R + B'*P(:,:,t)*B)*B'*P(:,:,t)*A; 
     end
     

@@ -23,13 +23,14 @@ abs(eig(A))
 
 %Suppongo che lo stato iniziale sia distribuito come una gaussiana con
 %valor medio [10 5 -3] e covarianza nota
-mu = [10 5 -3]';
+mu = [10 5 7]';
 x(:,1) = mu;
-sigma = 0.1*eye(3);
+var = 0.1;
+sigma = var*eye(3);
 
 %Suppongo che i rumori sullo stato e sull'uscita siano a media nulla e
 %covarianza nota
-Q_noise = 0.1*eye(3);    R_noise = 0.1;
+Q_noise = var*eye(3);    R_noise = var;
 
 %Parametri della simulazione
 sampleTime = 1;
@@ -44,10 +45,10 @@ T = 0:sampleTime:horizon;
 stato_reale = figure;
 for t=1:sampleTime:horizon
    u(:,t) = K_finito(:,:,t) * x(:,t);
-   x(:,t+1) = A*x(:,t) + B*u(:,t) + normrnd(0,0.1,[3,1]);
-   y(t) = C*x(:,t) + normrnd(0,0.1);
+   x(:,t+1) = A*x(:,t) + B*u(:,t) + normrnd(0,var,[3,1]);
+   y(t) = C*x(:,t) + normrnd(0,var);
 end
-y(length(T)) = C*x(:,length(T)) + normrnd(0,0.1);          %serve per la simulazione successiva
+y(length(T)) = C*x(:,length(T)) + normrnd(0,var);          %serve per la simulazione successiva
 figure(stato_reale);
 subplot(3,1,1);     plot(T,x(1,:));     title('x1');
 subplot(3,1,2);     plot(T,x(2,:));     title('x2');
