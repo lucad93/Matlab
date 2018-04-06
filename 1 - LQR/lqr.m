@@ -20,11 +20,11 @@ D = 0;
 horizon = 7;                        %giorni
 sampleTime = 1;
 T = 0:sampleTime:horizon;           %vettore che contiene tutti gli istanti temporali
-x0 = [10 5 -3]';                    %stato inziziale (a caso)
+x0 = [10 5 7]';                     %stato inziziale (a caso)
 
 %CONTROLLO LQR
 %Equazione di Riccati per determinare K
-[P, K, K_infinito] = riccati_P_K(A,B,Q,Qf,R,T);
+[K, K_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
 
 %Variabili per i grafici
 f_k_infinito = figure;
@@ -44,25 +44,17 @@ subplot(3,1,3); plot(Tsim,X(:,3));  title('x3');
 U = zeros(5, 1);
 
 figure(f_k);
-x(:,:,1) = x0;
+x(:,1) = x0;
 
 %Simulazione manuale su un orizzonte finito
 for t = 1:horizon
-    u = K(:,:,t) * x(:,:,t);
-    x(:,:,t+1) = A * x(:,:,t) + B * u;
+    u(:,t) = K(:,:,t) * x(:,t);
+    x(:,t+1) = A * x(:,t) + B * u(:,t);
 end
-%la funzione plot non accetta matrici di 3 dimensioni (x è di dimensioni 3x1x8)
-%quindi uso la funzione reshape per trasformarla in una matrice 3x8, così
-%levo quella colonna inutile
-x = reshape(x,[3,length(T)]);
+
 subplot(3,1,1); plot(T,x(1,:,:));  title('x1');
 subplot(3,1,2); plot(T,x(2,:,:));  title('x2');
 subplot(3,1,3); plot(T,x(3,:,:));  title('x3');
-
-%Calcolo la differenza tra i valori ottenuti con riccati_P_K e ourRiccatiSolver:
-[myK, myK_infinito] = ourRiccatiSolver(A,B,Q,Qf,R,T);
-diffK = K - myK;
-diffK_inf = K_infinito - myK_infinito;
 
 %Guardando i grafici si nota che la condizione x1(t)~2*x2(t)+x3(t) è
 %verificata a regime.
