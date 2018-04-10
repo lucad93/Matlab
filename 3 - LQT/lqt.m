@@ -1,9 +1,25 @@
 clear
 clc
 
+%Parametri della simulazione
+sampleTime = 1;
+horizon = 7;
+T = 0:sampleTime:horizon;
+
 %Matrici dei costi per lo stato (Q) e per i controlli (R)
-Q = [2 -2 -1; -2 5 2; -1 2 2];
-Qf = Q;
+b = 10000;
+c = 1;
+for t=1:horizon
+   if t==5 || t==6
+      a = b; 
+   else
+      a = 0; 
+   end
+   Q(:,:,t) = [a+1 -2 -1; -2 b+4 2; -1 2 c+1];
+end
+a = 0;
+Qf = [a+1 -2 -1; -2 b+4 2; -1 2 c+1];
+
 R = [17 0 -4 0 0; 0 1 0 0 0; -4 0 2 0 0; 0 0 0 2 -2; 0 0 0 -2 5];
 
 % Matrice dello stato
@@ -16,13 +32,8 @@ B = [4 0 -1 0 0; 0 1 0 -1 0; 0 0 1 1 -1];
 C = eye(3);
 D = 0;
 
-%Parametri della simulazione
-sampleTime = 1;
-horizon = 7;
-T = 0:sampleTime:horizon;
-
 %Stato iniziale e segnale di riferimento
-x0 = [10 5 7]';
+x0 = [8 5 7]';
 for t=1:length(T)
    z(1,t) = 10;
    z(2,t) = -10;
