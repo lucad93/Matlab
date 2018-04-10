@@ -2,10 +2,13 @@ clear;
 clc;
 
 %matrici dei costi per lo stato (Q) e per i controlli (R)
-Q = [2 -2 -1; -2 5 2; -1 2 2];
-Qf = Q;
+%Q = [2 -2 -1; -2 5 2; -1 2 2];
 R = [17 0 -4 0 0; 0 1 0 0 0; -4 0 2 0 0; 0 0 0 2 -2; 0 0 0 -2 5];
+%Qf = Q;
 
+%Modifico Q e vedo che succede
+Q = [6 -8 -4;-8 18 8;-4 8 6];
+Qf = Q;
 %Matrice dello stato
 A = eye(3);
 
