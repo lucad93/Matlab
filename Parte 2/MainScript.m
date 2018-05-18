@@ -1,10 +1,12 @@
+%% Fase di creazione del grafo
 clear
 clc
 tic
 
-% Dichiaro i job
-n = 3;
+% Parametri del problema
+n = 3;                                              % numero di job
 jobs = 1:n;
+constraints = [2 1];                                % matrice dei vincoli
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
 % presi a gruppi di i
@@ -49,5 +51,13 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
           end
       end
    end
+end
+toc
+
+%% Fase backward della programmazione dinamica
+tic
+% Considero due stadi contigui, partendo dall'ultimo
+for i=n+1:-1:2
+    
 end
 toc
