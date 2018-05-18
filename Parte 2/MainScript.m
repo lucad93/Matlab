@@ -54,6 +54,7 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
 end
 toc
 
+
 %% Fase backward della programmazione dinamica
 tic
 % Considero due stadi contigui, partendo dall'ultimo
@@ -61,3 +62,4 @@ for i=n+1:-1:2
     
 end
 toc
+
