@@ -1,12 +1,14 @@
 clear
 clc
+tic
 
 % Dichiaro i job
-n = 11;
+n = 3;
 jobs = 1:n;
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
 % presi a gruppi di i
+comb{n+1} = [];
 for i = 1:n+1
     % Con le graffe creo matrici che hanno elementi con dimensioni variabili
     comb{i} = combnk(jobs,i-1);
@@ -15,6 +17,7 @@ end
 % Ad ognuna di queste combinazioni in ogni stadio va associato uno stato
 % Uso una struttura dati per implementare i nodi, perché in oguno devo
 % memorizzare i job che contiene, i successori, i precedenti e il costo ottimo
+state{n+1} = [];
 for i=1:n+1                                         % per ongi stadio
    for j=1:size(comb{i},1)                          % per ogni stato in questo stadio
        state{i}(j).jobs = comb{i}(j,:);
@@ -35,17 +38,7 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
           if i==1
               state{i}(j).next(end+1) = k;
               state{i+1}(k).prev(end+1) = j;
-          end
-          %Parte sperimentale
-          if j == 7
-              state{i}(j).next(end+1) = 8;
-          end
-          if j == 4
-              state{i}(j).next(end+1) = 5;
-              
-          end
-          %Fine parte sperimentale
-          
+          else
               % controllo che il collegamento sia ammissibile, ovvero se
               % hanno almeno un job in comune (intersezione degli insiemi
               % dei job diversa da insieme vuoto)
@@ -55,4 +48,6 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
               end
           end
       end
+   end
 end
+toc
