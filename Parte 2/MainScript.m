@@ -2,7 +2,7 @@ clear
 clc
 
 % Dichiaro i job
-n = 3;
+n = 11;
 jobs = 1:n;
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
@@ -35,7 +35,17 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
           if i==1
               state{i}(j).next(end+1) = k;
               state{i+1}(k).prev(end+1) = j;
-          else
+          end
+          %Parte sperimentale
+          if j == 7
+              state{i}(j).next(end+1) = 8;
+          end
+          if j == 4
+              state{i}(j).next(end+1) = 5;
+              
+          end
+          %Fine parte sperimentale
+          
               % controllo che il collegamento sia ammissibile, ovvero se
               % hanno almeno un job in comune (intersezione degli insiemi
               % dei job diversa da insieme vuoto)
@@ -45,5 +55,4 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
               end
           end
       end
-   end
 end
