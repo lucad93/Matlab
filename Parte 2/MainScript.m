@@ -4,12 +4,12 @@ clc
 tic
 
 % Parametri del problema
-n = 3;                                              % numero di job
+n = 4;                                              % numero di job
 jobs = 1:n;
-constraints = [2 1];                                % matrice dei vincoli
-proc_time = [4 2 6];                                % processing time di ogni job
-due_time = [7 9 9];                                 % due time di ogni job
-weight = [0.25 0.25 0.25];                          % peso di ogni job
+constraints = [];                                   % matrice dei vincoli
+proc_time = [8 6 10 7];                             % processing time di ogni job
+due_time = [14 9 16 16];                            % due time di ogni job
+weight = [0.25 0.25 0.25 0.25];                     % peso di ogni job
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
 % presi a gruppi di i
@@ -46,14 +46,15 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
               state{i+1}(k).prev(end+1) = j;
           else
               % controllo che il collegamento sia ammissibile, ovvero se
-              % hanno almeno un job in comune (intersezione degli insiemi
-              % dei job diversa da insieme vuoto)
-              if ~isempty(intersect(state{i}(j).jobs, state{i+1}(k).jobs))
+              % lo stato attuale è sottoinsieme del successivo
+              if all(ismember(state{i}(j).jobs, state{i+1}(k).jobs)) == 1
                   state{i}(j).next(end+1) = k;
                   state{i+1}(k).prev(end+1) = j;
               end
           end
       end
+      % In ogni caso alloco il vettore dei costi di ogni stato come vettore di infiniti
+      state{i}(j).cost = Inf(1, length(state{i+1}));
    end
 end
 toc
@@ -69,8 +70,6 @@ for i=n:-1:1
     % Guardo tutti gli archi per passare dallo stadio attuale a quello successivo
     % Itero tra gli stati dello stadio attuale
     for j=1:length(state{i})
-       % Prima alloco il vettore dei costi di ogni stato come vettore di infiniti
-       state{i}(j).cost = Inf(1, length(state{i}(j).next));
        % Per ogni stato guardo tutti gli archi uscenti
        for k=1:length(state{i}(j).next)
           % Calcolo il costo tra lo stato attuale e il successivo (con l'arco che sto considerando)
@@ -81,12 +80,12 @@ for i=n:-1:1
           % nello stato successivo - sua due time) e 0
           % + il costo per andare nel nuovo stato
           % Se però l'arco viola uno dei vincoli, viene lasciato costo infinito
-          if true %verifyConstraints(constraints)
+          if verifyConstraints(constraints, state{i}(j).jobs, state{i+1}(nextStateIndex).jobs)
               % Calcolo st, sommando sui processing time dei job dello stato
               st = 0;
               stateJobs = state{i}(j).jobs;
               for o=1:length(stateJobs)
-                  st = st + proc_time(o);
+                  st = st + proc_time(stateJobs(o));
               end
               %Trovo il job che deve essere scelto
               nextJob = setdiff(state{i+1}(nextStateIndex).jobs, state{i}(j).jobs);
