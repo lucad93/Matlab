@@ -4,12 +4,14 @@ clc
 tic
 
 % Parametri del problema
-n = 4;                                              % numero di job
+n = 11;                                             % numero di job
 jobs = 1:n;
-constraints = [];                                   % matrice dei vincoli
-proc_time = [8 6 10 7];                             % processing time di ogni job
-due_time = [14 9 16 16];                            % due time di ogni job
-weight = [0.25 0.25 0.25 0.25];                     % peso di ogni job
+constraints = [7 8
+               4 8
+               4 5];                                % matrice dei vincoli
+proc_time = [7 3 6 8 3 12 12 5 3 1 1];              % processing time di ogni job
+due_time = [12 4 16 30 4 31 32 35 18 20 21];        % due time di ogni job
+weight = [1 1 1 1.5 2 1 2 1 1.2 1 2];               % peso di ogni job
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
 % presi a gruppi di i
@@ -21,13 +23,12 @@ end
 
 % Ad ognuna di queste combinazioni in ogni stadio va associato uno stato
 % Uso una struttura dati per implementare i nodi, perché in oguno devo
-% memorizzare i job che contiene, i successori, i precedenti e il costo ottimo
+% memorizzare i job che contiene, i successori e il costo ottimo
 state{n+1} = [];
 for i=1:n+1                                         % per ongi stadio
    for j=1:size(comb{i},1)                          % per ogni stato in questo stadio
        state{i}(j).jobs = comb{i}(j,:);
        state{i}(j).next = [];
-       state{i}(j).prev = [];
        state{i}(j).cost = [];                       % contiene tutti i costi per tutti gli stati successivi
        state{i}(j).optimal = [];                    % contiene il costo ottimo e lo stato successivo ottimo
    end
@@ -39,17 +40,15 @@ for i=1:n                               % esamino gli stadi contigui a coppie (i
    for j=1:length(state{i})
       for k=1:length(state{i+1})
           % se i==1 sto esaminando lo stadio 0, dove tutti i collegamenti sono possibili
-          % in next e prev memorizzo gli indici degli stati, non l'insieme
+          % in next memorizzo gli indici degli stati, non l'insieme
           % dei job che contengono
           if i==1
               state{i}(j).next(end+1) = k;
-              state{i+1}(k).prev(end+1) = j;
           else
               % controllo che il collegamento sia ammissibile, ovvero se
               % lo stato attuale è sottoinsieme del successivo
               if all(ismember(state{i}(j).jobs, state{i+1}(k).jobs)) == 1
                   state{i}(j).next(end+1) = k;
-                  state{i+1}(k).prev(end+1) = j;
               end
           end
       end
@@ -81,7 +80,7 @@ for i=n:-1:1
           % + il costo per andare nel nuovo stato
           % Se però l'arco viola uno dei vincoli, viene lasciato costo infinito
           if verifyConstraints(constraints, state{i}(j).jobs, state{i+1}(nextStateIndex).jobs)
-              % Calcolo st, sommando sui processing time dei job dello stato
+              % Calcolo st, sommando i processing time dei job dello stato
               st = 0;
               stateJobs = state{i}(j).jobs;
               for o=1:length(stateJobs)
@@ -104,3 +103,28 @@ for i=n:-1:1
     end
 end
 toc
+
+%% Fase forward della programmazione dinamica
+% In ogni stadio estraggo lo stato ottimo in cui andare
+% Al primo stadio c'è un solo stato, quindi la scelta dello stato iniziale
+% è obbligata (questo stato ha indice 1, perché è l'unico del suo stadio).
+% Questo contiene nel suo campo "optimal" il costo finale del percorso
+% (primo valore) e l'indice dello stato successivo (secondo
+% valore)
+previousStateIndex = 1;
+finalCost = state{1}(1).optimal(1);
+sequence(n) = 0;
+% Per ogni coppia di stadi
+for i=1:n
+    % Estraggo lo stato successivo nello stadio successivo
+    nextStateIndex = state{i}(previousStateIndex).optimal(2);
+    % Calcolo quale job deve essere eseguito per andare in quello stato
+    nextJob = setdiff(state{i+1}(nextStateIndex).jobs, state{i}(previousStateIndex).jobs);
+    % Aggiungo il job scelto alla lista di job eseguiti
+    sequence(i) = nextJob;
+    % Aggiorno lo stato attuale per preparare la prossima iterazione
+    previousStateIndex = nextStateIndex;
+end
+% Stampo a video i risultati
+disp("Optimal cost: ");       disp(finalCost);
+disp("Sequence of jobs: ");   disp(sequence);
