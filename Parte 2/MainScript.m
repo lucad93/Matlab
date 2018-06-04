@@ -4,14 +4,12 @@ clc
 tic
 
 % Parametri del problema
-n = 11;                                             % numero di job
+n = xlsread('dati.xlsx',1,'B1');                    % numero di job
 jobs = 1:n;
-constraints = [7 8
-               4 8
-               4 5];                                % matrice dei vincoli
-proc_time = [7 3 6 8 3 12 12 5 3 1 1];              % processing time di ogni job
-due_time = [12 4 16 30 4 31 32 35 18 20 21];        % due time di ogni job
-weight = [1 1 1 1.5 2 1 2 1 1.2 1 2];               % peso di ogni job
+constraints = xlsread('dati.xlsx',1,'C10:D12');                           % matrice dei vincoli
+proc_time = xlsread('dati.xlsx',1,'B2:L2');         % processing time di ogni job
+due_time = xlsread('dati.xlsx',1,'B3:L3');          % due time di ogni job
+weight = xlsread('dati.xlsx',1,'B4:L4');            % peso di ogni job
 
 % Ogni stadio i (i va da 0 a 11) ha uno stato per ognuna delle combinazioni degli 11 job
 % presi a gruppi di i
